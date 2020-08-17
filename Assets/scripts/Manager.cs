@@ -75,10 +75,13 @@ public class Manager : MonoBehaviour
         rateStrings[4] = "very fast";
         rateStrings[5] = "hyperfast";
         descriptions = new string[4];
-        descriptions[0] = "Pencils do nearby homework. They're stronger against geometry homework.";
-        descriptions[1] = "Erasers do all homework depending on distance. They're stronger against history homework.";
-        descriptions[2] = "Bottles do a constant amount divided over all homework, and then refill. They're stronger against chemistry homework.";
-        descriptions[3] = "Folders delay all homework. Group projects get done when delayed.";
+        descriptions[0] = "Pencils do nearby homework. They're stronger against geometry homework.\n\nStrength: 6\nRange: 1";
+        descriptions[1] = "Erasers do all homework but do more to closer homework. They're stronger against history homework.\n" + 
+            "\nStrength: 0 to 5\nTrigger Range: 1\nEffect Range: 6";
+        descriptions[2] = "Bottles do a constant amount divided over all homework, and then refill for 3 turns. " +
+            "They're stronger against chemistry homework.\n\nStrength: 2 to 30\nTrigger Range: 0\nEffect Range: 6";
+        descriptions[3] = "Folders delay all homework for 1 turn. Group projects get done when delayed.\n"+ 
+            "\nStrength: 0\nTrigger Range: 0\nEffect Range: 6";
         state = "title";
         //Select();
     }
@@ -111,7 +114,7 @@ public class Manager : MonoBehaviour
 					homeworks = GameObject.FindObjectsOfType<Homework>();
                     /*Temporary[] temporaries = GameObject.FindObjectsOfType<Temporary>();
                     //Debug.Log(temporaries.Length);*/
-                    if(folderState != 3)
+                    if(folderState < 2)
                     {
                         for (int b = 0; b < homeworks.Length; b++)
                         {
@@ -164,7 +167,7 @@ public class Manager : MonoBehaviour
                             homeworks[b].TakeDamage(0, 3);
                         }
 
-                        folderState = 3;
+                        folderState = 2;
                     }
 
                     triggerBottle = false;
