@@ -170,6 +170,11 @@ public class Manager : MonoBehaviour
                         folderState = 2;
                     }
 
+                    for(int b = 0; b < homeworks.Length; b++)
+                    {
+                        homeworks[b].CheckHealth();
+                    }
+
                     triggerBottle = false;
                     triggerFolder = false;
                     homeworks = GameObject.FindObjectsOfType<Homework>();
@@ -315,7 +320,7 @@ public class Manager : MonoBehaviour
         {
             centerText.text = "To buy supplies, click the supply's button and click a desk. Each supply costs 2 A's." + 
                 "\n\nClick an already-bought supply to sell it." +
-                "\n\nTry clicking some other buttons.";
+                "\n\nClick the other buttons to see what they do.";
             state = "help";
         }
     }

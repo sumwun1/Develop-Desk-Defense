@@ -51,11 +51,6 @@ public class Homework : MonoBehaviour
         }
 
         health -= damage;
-
-        if (health <= 0)
-        {
-            Destroy(gameObject);
-        }
     }
 
     public void Turn()
@@ -94,6 +89,14 @@ public class Homework : MonoBehaviour
 
 		return(desks.transform.GetChild(deskIndex).GetComponent<Desk>());
 	}
+
+    public void CheckHealth()
+    {
+        if (health <= 0)
+        {
+            Destroy(gameObject);
+        }
+    }
 
     public void SetId(int input)
     {
