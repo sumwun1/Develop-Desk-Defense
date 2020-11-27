@@ -79,7 +79,7 @@ public class Manager : MonoBehaviour
         descriptions[1] = "Erasers do all homework but do more to closer homework. They're stronger against history homework.\n" + 
             "\nStrength: 0 to 5\nTrigger Range: 1\nEffect Range: 6";
         descriptions[2] = "Bottles do a constant amount divided over all homework, and then refill for 3 turns. " +
-            "They're stronger against chemistry homework.\n\nStrength: 2 to 30\nTrigger Range: 0\nEffect Range: 6";
+            "They're stronger against chemistry homework.\n\nStrength: 2 to 32\nTrigger Range: 0\nEffect Range: 6";
         descriptions[3] = "Folders delay all homework for 1 turn. Group projects get done when delayed.\n"+ 
             "\nStrength: 0\nTrigger Range: 0\nEffect Range: 6";
         state = "title";
@@ -154,7 +154,7 @@ public class Manager : MonoBehaviour
                     {
                         for (int b = 0; b < homeworks.Length; b++)
                         {
-                            homeworks[b].TakeDamage(Mathf.FloorToInt(30f / homeworks.Length), 2);
+                            homeworks[b].TakeDamage(Mathf.FloorToInt(32f / homeworks.Length), 2);
                         }
 
                         bottleState = 4;

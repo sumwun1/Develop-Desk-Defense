@@ -43,7 +43,7 @@ public class Homework : MonoBehaviour
                 damage *= 2;
             }else if(id == 3)
             {
-                damage = 30;
+                damage = 32;
             }else
             {
                 Debug.Log("id and type were " + id);
