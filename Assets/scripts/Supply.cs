@@ -70,7 +70,7 @@ public class Supply : MonoBehaviour
         return (true);
     }
 
-    private void Sell()
+    public void Sell()
     {
         //_manager = GameObject.Find("_manager").GetComponent<Manager>();
 
@@ -78,16 +78,12 @@ public class Supply : MonoBehaviour
         {
             _manager.UpdateA(2);
             desk.occupied = false;
+            _manager.SetTutorial(5, 6);
             Destroy(gameObject);
         }
     }
 
     private void OnMouseUp()
-    {
-        Sell();
-    }
-
-    public void Sell0()
     {
         Sell();
     }

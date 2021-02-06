@@ -14,12 +14,14 @@ public class Manager : MonoBehaviour
     public GameObject slowButton;
     public GameObject fastButton;
     public GameObject sellButton;
+    public GameObject skipButton;
     public GameObject closeButton;
     public GameObject pauseButton;
     public GameObject cancelButton;
     public GameObject retakeButton;
     public GameObject forfeitButton;
     public GameObject centerPanel;
+    public GameObject bottomPanel;
     public GameObject unlockText;
     public GameObject retakeText;
     public GameObject selectedImage;
@@ -28,6 +30,7 @@ public class Manager : MonoBehaviour
     public Text tpsText;
     public Text roundText;
     public Text centerText;
+    public Text bottomText;
     public AudioSource titleAudio;
     public AudioSource unlockAudio;
     public AudioSource failAudio;
@@ -41,6 +44,7 @@ public class Manager : MonoBehaviour
     bool triggerBottle;
     bool triggerFolder;
     int a;
+    int tutorial;
     int unlocked;
     int supplyId;
     int bottleState;
@@ -63,6 +67,7 @@ public class Manager : MonoBehaviour
         UpdateA(1);
         showOverwrite = false;
         unlocked = 0;
+        tutorial = 0;
         supplyId = -1;
         workAudioIndex = 3;
         tempoFactors = new float[4];
@@ -103,7 +108,8 @@ public class Manager : MonoBehaviour
         cancelButton.SetActive(state == "place");
         retakeButton.SetActive(state == "title" || state == "fail");
         forfeitButton.SetActive(state == "work" || state == "pause");
-        centerPanel.SetActive(state == "title" || state == "help" || state == "fail");
+        centerPanel.SetActive(state == "title" || state == "help" || state == "fail" || tutorial == 1 || tutorial == 3);
+        bottomPanel.SetActive(tutorial >= 4 && tutorial <= 5);
         selectedImage.SetActive(state == "place");
         period = tempoFactors[workAudioIndex] / Mathf.Pow(2, rateIndex);
 
@@ -254,6 +260,7 @@ public class Manager : MonoBehaviour
             state = "work";
             workAudioIndex = (workAudioIndex + 1) % 4;
             workAudio[workAudioIndex].Play();
+            SetTutorial(1, 2);
             NextRound();
         }
     }
@@ -272,6 +279,7 @@ public class Manager : MonoBehaviour
                 //change sprite of selected supply
                 supplyId = id;
                 selectedImage.GetComponent<RawImage>().texture = textures[id];
+                SetTutorial(3, 4);
                 TogglePlace();
             }
             else
@@ -286,10 +294,13 @@ public class Manager : MonoBehaviour
     {
         unlockText.SetActive(false);
         retakeText.SetActive(false);
+        skipButton.SetActive(false);
         unlockImage.SetActive(false);
         titleAudio.Stop();
         failAudio.Stop();
         state = "select";
+        SetTutorial(0, 1);
+        SetTutorial(2, 3);
         homeworks = GameObject.FindObjectsOfType<Homework>();
 
         for (int b = 0; b < homeworks.Length; b++)
@@ -300,6 +311,16 @@ public class Manager : MonoBehaviour
         for (int b = 0; b < 4; b++)
         {
             workAudio[b].Stop();
+        }
+
+        if(tutorial == 1)
+        {
+            centerText.text = "Click \">\" to start doing homework. Round 1 has zero assignments, but later rounds will have more.";
+        }
+
+        if(tutorial == 3)
+        {
+            centerText.text = "Now that you unlocked a supply and can afford it, click the button on the right to buy it.";
         }
     }
 
@@ -324,7 +345,7 @@ public class Manager : MonoBehaviour
         else if(state == "select")
         {
             centerText.text = "To buy supplies, click the supply's button and click a desk. Each supply costs 2 A's." + 
-                "\n\nClick an already-bought supply to sell it." +
+                "\n\nClick a supply you already bought to sell it and get a full refund." +
                 "\n\nClick the other buttons to see what they do.";
             state = "help";
         }
@@ -381,6 +402,7 @@ public class Manager : MonoBehaviour
         }
 
         centerText.text = "You failed.";
+        retakeText.GetComponent<Text>().text = "retake";
         retakeText.SetActive(true);
         failAudio.Play();
         state = "fail";
@@ -396,7 +418,26 @@ public class Manager : MonoBehaviour
         {
             for (int b = 0; b < supplies.Length; b++)
             {
-                supplies[b].GetComponent<Supply>().Sell0();
+                supplies[b].GetComponent<Supply>().Sell();
+            }
+        }
+    }
+
+    public void SetTutorial(int previous, int next)
+    {
+        if (tutorial == previous)
+        {
+            //Debug.Log(previous + " " + next);
+            tutorial = next;
+
+            if(next == 4)
+            {
+                bottomText.text = "Click a desk to place a supply there.";
+            }
+
+            if (next == 5)
+            {
+                bottomText.text = "You can click a supply you already bought to sell it and get a full refund.";
             }
         }
     }
@@ -405,6 +446,12 @@ public class Manager : MonoBehaviour
     {
         a += addition;
         aText.text = a + " A's";
+    }
+
+    public void Skip()
+    {
+        SetTutorial(0, 6);
+        Select();
     }
 
     public void TriggerBottle()

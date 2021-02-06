@@ -18,6 +18,7 @@ public class Desk : MonoBehaviour
         {
             Instantiate(_manager.supplies[_manager.GetSupplyId()], transform.position, transform.rotation).GetComponent<Supply>().Start0(this);
             _manager.UpdateA(-2);
+            _manager.SetTutorial(4, 5);
             occupied = true;
 
             if(_manager.GetA() < 2 || transform.parent.GetComponent<Desks>().Occupied(true))
