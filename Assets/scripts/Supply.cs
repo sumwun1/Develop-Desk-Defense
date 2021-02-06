@@ -24,6 +24,7 @@ public class Supply : MonoBehaviour
     {
         desk = input;
         _manager = GameObject.Find("_manager").GetComponent<Manager>();
+        //Debug.Log(_manager.GetA());
 
         if(id == 0)
         {
@@ -69,14 +70,26 @@ public class Supply : MonoBehaviour
         return (true);
     }
 
-    private void OnMouseUp()
+    private void Sell()
     {
+        //_manager = GameObject.Find("_manager").GetComponent<Manager>();
+
         if (_manager.GetState() == "select")
         {
             _manager.UpdateA(2);
             desk.occupied = false;
             Destroy(gameObject);
         }
+    }
+
+    private void OnMouseUp()
+    {
+        Sell();
+    }
+
+    public void Sell0()
+    {
+        Sell();
     }
 
     public Manager GetManager()

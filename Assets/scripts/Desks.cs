@@ -29,6 +29,19 @@ public class Desks : MonoBehaviour
     {
         
     }
+
+	public bool Occupied(bool occupied)
+    {
+		for (int a = 0; a < 16; a++)
+		{
+            if (transform.GetChild(a).GetComponent<Desk>().occupied != occupied)
+            {
+				return (!occupied);
+            }
+		}
+
+		return (occupied);
+    }
 	
 	public Desk[] StartPencilEraser(Desk desk)
 	{

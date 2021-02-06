@@ -8,10 +8,13 @@ public class Manager : MonoBehaviour
     public int rateIndex;
     public int current;
     public int record;
+    public GameObject desks;
     public GameObject workButton;
     public GameObject helpButton;
     public GameObject slowButton;
     public GameObject fastButton;
+    public GameObject sellButton;
+    public GameObject closeButton;
     public GameObject pauseButton;
     public GameObject cancelButton;
     public GameObject retakeButton;
@@ -75,12 +78,12 @@ public class Manager : MonoBehaviour
         rateStrings[4] = "very fast";
         rateStrings[5] = "hyperfast";
         descriptions = new string[4];
-        descriptions[0] = "Pencils do nearby homework. They're stronger against geometry homework.\n\nStrength: 6\nRange: 1";
-        descriptions[1] = "Erasers do all homework but do more to closer homework. They're stronger against history homework.\n" + 
+        descriptions[0] = "Pencils do nearby homework. They're stronger against geometry (white) homework.\n\nStrength: 6\nRange: 1";
+        descriptions[1] = "Erasers do all homework but do more to closer homework. They're stronger against history (green) homework.\n" + 
             "\nStrength: 0 to 5\nTrigger Range: 1\nEffect Range: 6";
         descriptions[2] = "Bottles do a constant amount divided over all homework, and then refill for 3 turns. " +
-            "They're stronger against chemistry homework.\n\nStrength: 2 to 32\nTrigger Range: 0\nEffect Range: 6";
-        descriptions[3] = "Folders delay all homework for 1 turn. Group projects get done when delayed.\n"+ 
+            "They're stronger against chemistry (red) homework.\n\nStrength: 2 to 32\nTrigger Range: 0\nEffect Range: 6";
+        descriptions[3] = "Folders delay all homework for 1 turn. Group projects (blue) get done when delayed.\n"+ 
             "\nStrength: 0\nTrigger Range: 0\nEffect Range: 6";
         state = "title";
         //Select();
@@ -89,10 +92,13 @@ public class Manager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Supply[] supplies = GameObject.FindObjectsOfType<Supply>();
         workButton.SetActive(state == "select" || state == "help");
         helpButton.SetActive(state == "select" || state == "help");
         slowButton.SetActive((state == "select" || state == "help" || state == "pause") && rateIndex > 0);
         fastButton.SetActive((state == "select" || state == "help" || state == "pause") && rateIndex < 5);
+        //sellButton.SetActive((state == "select" || state == "help") && desks.GetComponent<Desks>().Occupied(false));
+        closeButton.SetActive(state == "help");
         pauseButton.SetActive(state == "work" || state == "pause");
         cancelButton.SetActive(state == "place");
         retakeButton.SetActive(state == "title" || state == "fail");
@@ -132,7 +138,6 @@ public class Manager : MonoBehaviour
                     }*/
                 }
                 else{
-                    Supply[] supplies = GameObject.FindObjectsOfType<Supply>();
                     //Debug.Log(folderState);
 
                     if (bottleState > 0)
@@ -314,7 +319,7 @@ public class Manager : MonoBehaviour
     {
         if(state == "help")
         {
-            Select();
+            centerText.text = "This button shows the panel that you are looking at right now.";
         }
         else if(state == "select")
         {
@@ -381,6 +386,21 @@ public class Manager : MonoBehaviour
         state = "fail";
     }
 
+    public void SellAll()
+    {
+        if (state == "help")
+        {
+            centerText.text = "This button sells all your supplies.";
+        }
+        else if (state == "select")
+        {
+            for (int b = 0; b < supplies.Length; b++)
+            {
+                supplies[b].GetComponent<Supply>().Sell0();
+            }
+        }
+    }
+
     public void UpdateA(int addition)
     {
         a += addition;
@@ -410,6 +430,11 @@ public class Manager : MonoBehaviour
     public string GetState()
     {
         return (state);
+    }
+
+    public int GetA()
+    {
+        return (a);
     }
 
     public bool GetOverwrite()
