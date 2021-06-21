@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System;
 
 public class Homework : MonoBehaviour
@@ -8,6 +9,9 @@ public class Homework : MonoBehaviour
     public GameObject damageColor;
     public GameObject damageAudio;
     public GameObject overwrite;
+    public Canvas canvas;
+    public Text healthText;
+    public Color[] colors;
     public Material[] materials;
     int id;
     int deskIndex;
@@ -24,6 +28,8 @@ public class Homework : MonoBehaviour
 		b = GameObject.Find("b");
 		_manager = GameObject.Find("_manager").GetComponent<Manager>();
         health = (int)Math.Ceiling(10f * _manager.current / Math.Sqrt(_manager.pin.GetTotal()));
+        healthText.text = "" +  health;
+        canvas.worldCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
     }
 
     public void TakeDamage(int damage, int type)
@@ -51,6 +57,7 @@ public class Homework : MonoBehaviour
         }
 
         health -= damage;
+        healthText.text = "" + health;
     }
 
     public void Turn()
@@ -92,6 +99,8 @@ public class Homework : MonoBehaviour
 
     public void CheckHealth()
     {
+        healthText.text = "" + health;
+
         if (health <= 0)
         {
             Destroy(gameObject);
@@ -102,5 +111,6 @@ public class Homework : MonoBehaviour
     {
         id = input;
         GetComponent<MeshRenderer>().material = materials[id];
+        //healthText.color = colors[id];
     }
 }
