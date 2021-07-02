@@ -85,7 +85,11 @@ public class Supply : MonoBehaviour
 
     private void OnMouseUp()
     {
-        Sell();
+        if (_manager.GetState() == "select")
+        {
+            _manager.Click();
+            Sell();
+        }
     }
 
     public Manager GetManager()

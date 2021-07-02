@@ -14,8 +14,11 @@ public class Desk : MonoBehaviour
 
     private void OnMouseUp()
     {
+        //Debug.Log("desk called click");
+
         if (!occupied && _manager.GetState() == "place" && _manager.GetSupplyId() >= 0)
         {
+            _manager.Click();
             Instantiate(_manager.supplies[_manager.GetSupplyId()], transform.position, transform.rotation).GetComponent<Supply>().Start0(this);
             _manager.UpdateA(-2);
             _manager.SetTutorial(4, 5);

@@ -13,8 +13,9 @@ public class Manager : MonoBehaviour
     public GameObject helpButton;
     public GameObject slowButton;
     public GameObject fastButton;
-    public GameObject sellButton;
+    //public GameObject sellButton;
     public GameObject skipButton;
+    public GameObject statButton;
     public GameObject closeButton;
     public GameObject pauseButton;
     public GameObject cancelButton;
@@ -22,13 +23,17 @@ public class Manager : MonoBehaviour
     public GameObject forfeitButton;
     public GameObject centerPanel;
     public GameObject bottomPanel;
+    public GameObject turnsText;
+    public GameObject clicksText;
     public GameObject unlockText;
     public GameObject retakeText;
+    public GameObject skipText;
     public GameObject selectedImage;
     public GameObject unlockImage;
     public Text aText;
     public Text tpsText;
-    public Text roundText;
+    public Text currentText;
+    public Text recordText;
     public Text centerText;
     public Text bottomText;
     public AudioSource titleAudio;
@@ -40,10 +45,13 @@ public class Manager : MonoBehaviour
     public Texture[] textures;
     public AudioSource[] workAudio;
 	bool moveHomework;
+    bool showStats;
     bool showOverwrite;
     bool triggerBottle;
     bool triggerFolder;
     int a;
+    int turns;
+    int clicks;
     int tutorial;
     int unlocked;
     int supplyId;
@@ -65,7 +73,10 @@ public class Manager : MonoBehaviour
     void Start()
     {
         UpdateA(1);
+        showStats = false;
         showOverwrite = false;
+        turns = 0;
+        clicks = 0;
         unlocked = 0;
         tutorial = 0;
         supplyId = -1;
@@ -102,15 +113,18 @@ public class Manager : MonoBehaviour
         helpButton.SetActive(state == "select" || state == "help");
         slowButton.SetActive((state == "select" || state == "help" || state == "pause") && rateIndex > 0);
         fastButton.SetActive((state == "select" || state == "help" || state == "pause") && rateIndex < 5);
+        statButton.SetActive(state == "select" || state == "help");
         //sellButton.SetActive((state == "select" || state == "help") && desks.GetComponent<Desks>().Occupied(false));
         closeButton.SetActive(state == "help");
         pauseButton.SetActive(state == "work" || state == "pause");
         cancelButton.SetActive(state == "place");
-        retakeButton.SetActive(state == "title" || state == "fail");
+        retakeButton.SetActive(state == "title" || state == "fail" || state == "unlock");
+        skipButton.SetActive(state == "title" || state == "unlock");
         forfeitButton.SetActive(state == "work" || state == "pause");
-        centerPanel.SetActive(state == "title" || state == "help" || state == "fail" || tutorial == 1 || tutorial == 3);
+        centerPanel.SetActive(state == "title" || state == "help" || state == "fail" || state == "unlock" || tutorial == 1 || tutorial == 3);
         bottomPanel.SetActive(tutorial >= 4 && tutorial <= 5);
         selectedImage.SetActive(state == "place");
+        unlockImage.SetActive(state == "unlock");
         period = tempoFactors[workAudioIndex] / Mathf.Pow(2, rateIndex);
 
         for (int b = 0; b < unlocked; b++)
@@ -122,7 +136,43 @@ public class Manager : MonoBehaviour
             time -= Time.deltaTime;
 
             if (time <= 0){
-				if(moveHomework){
+                if (homeworks.Length < 1 && pin.GetRemaining() < 1)
+                {
+                    current++;
+
+                    if (current > record)
+                    {
+                        UpdateA(current - record);
+                        record = current;
+                        currentText.text = "Current: " + current;
+                        recordText.text = "Best: " + record;
+
+                        if (record == 2 || record == 3 || record == 5 || record == 7)
+                        {
+                            for (int b = 0; b < 4; b++)
+                            {
+                                workAudio[b].Stop();
+                            }
+
+                            unlockImage.GetComponent<RawImage>().texture = textures[unlocked];
+                            unlocked++;
+                            centerText.text = "Unlocked new supply!";
+                            retakeText.GetComponent<Text>().text = "description";
+                            //retakeText.SetActive(true);
+                            unlockText.SetActive(true);
+                            //skipText.SetActive(true);
+                            unlockAudio.Play();
+                            state = "unlock";
+                            return;
+                        }
+                    }
+
+                    currentText.text = "Current: " + current;
+                    recordText.text = "Best: " + record;
+                    //moveHomework = true;
+                    NextRound();
+                }
+                else if (moveHomework){
 					homeworks = GameObject.FindObjectsOfType<Homework>();
                     /*Temporary[] temporaries = GameObject.FindObjectsOfType<Temporary>();
                     //Debug.Log(temporaries.Length);*/
@@ -142,6 +192,7 @@ public class Manager : MonoBehaviour
                     {
                         willSpawn--;
                     }*/
+                    moveHomework = false;
                 }
                 else{
                     //Debug.Log(folderState);
@@ -189,41 +240,11 @@ public class Manager : MonoBehaviour
                     triggerBottle = false;
                     triggerFolder = false;
                     homeworks = GameObject.FindObjectsOfType<Homework>();
-
-                    if (homeworks.Length < 1 && pin.GetRemaining() < 1)
-                    {
-                        current++;
-
-                        if(current > record)
-                        {
-                            UpdateA(current - record);
-                            record = current;
-                            roundText.text = "Current: " + current + ", Record: " + record;
-
-                            if (record == 2 || record == 3 || record == 5 || record == 7)
-                            { 
-                                for (int b = 0; b < 4; b++)
-                                {
-                                    workAudio[b].Stop();
-                                }
-
-                                unlockImage.GetComponent<RawImage>().texture = textures[unlocked];
-                                unlocked++;
-                                centerText.text = "Unlocked new supply!";
-                                unlockText.SetActive(true);
-                                unlockImage.SetActive(true);
-                                unlockAudio.Play();
-                                state = "fail";
-                                return;
-                            }
-                        }
-
-                        roundText.text = "Current: " + current + ", Record: " + record;
-                        NextRound();
-                    }
+                    turns++;
+                    turnsText.GetComponent<Text>().text = "Turns: " + turns;
+                    moveHomework = true;
                 }
-				
-                moveHomework = !moveHomework;				
+								
 				time = period;
 			}
         }
@@ -253,8 +274,10 @@ public class Manager : MonoBehaviour
         if(state == "help")
         {
             centerText.text = "This button starts the homework.";
+            return;
         }
-        else if(state == "select")
+        
+        if(state == "select")
         {
             current = 1;
             state = "work";
@@ -262,7 +285,10 @@ public class Manager : MonoBehaviour
             workAudio[workAudioIndex].Play();
             SetTutorial(1, 2);
             NextRound();
+            return;
         }
+
+        Debug.Log("tried to start work when state was " + state);
     }
 
     public void SelectSupply(int id)
@@ -271,8 +297,10 @@ public class Manager : MonoBehaviour
         {
             showOverwrite = true;
             centerText.text = descriptions[id];
+            return;
         }
-        else if (state == "select")
+        
+        if (state == "select")
         {
             if (a >= 2)
             {
@@ -287,19 +315,22 @@ public class Manager : MonoBehaviour
                 centerText.text = "Your grades are too low!";
                 state = "help";
             }
+
+            return;
         }
+
+        Debug.Log("tried to select supply when state was " + state);
     }
 
     public void Select()
     {
         unlockText.SetActive(false);
-        retakeText.SetActive(false);
-        skipButton.SetActive(false);
-        unlockImage.SetActive(false);
+        skipText.SetActive(false);
+        //retakeText.SetActive(false);
+        //skipButton.SetActive(false);
         titleAudio.Stop();
         failAudio.Stop();
         state = "select";
-        SetTutorial(0, 1);
         SetTutorial(2, 3);
         homeworks = GameObject.FindObjectsOfType<Homework>();
 
@@ -324,16 +355,34 @@ public class Manager : MonoBehaviour
         }
     }
 
+    public void RetakeButton()
+    {
+        if(state == "unlock")
+        {
+            ToggleHelp();
+            SelectSupply(unlocked - 1);
+            return;
+        }
+
+        SetTutorial(0, 1);
+        Select();
+    }
+
     public void TogglePlace()
     {
         if(state == "place")
         {
             Select();
+            return;
         }
-        else if(state == "select")
+        
+        if(state == "select")
         {
             state = "place";
+            return;
         }
+
+        Debug.Log("tried to toggle place when state was " + state);
     }
 
     public void ToggleHelp()
@@ -341,14 +390,25 @@ public class Manager : MonoBehaviour
         if(state == "help")
         {
             centerText.text = "This button shows the panel that you are looking at right now.";
+            return;
         }
-        else if(state == "select")
+        
+        if(state == "select")
         {
             centerText.text = "To buy supplies, click the supply's button and click a desk. Each supply costs 2 A's." + 
                 "\n\nClick a supply you already bought to sell it and get a full refund." +
-                "\n\nClick the other buttons to see what they do.";
+                "\n\nLeave this panel open and click the other buttons to see what they do.";
             state = "help";
+            return;
         }
+        
+        if(state == "unlock")
+        {
+            state = "help";
+            return;
+        }
+        
+        Debug.Log("tried to toggle help when state was " + state);
     }
 
     public void ChangeTps(bool faster)
@@ -385,13 +445,18 @@ public class Manager : MonoBehaviour
         {
             workAudio[workAudioIndex].Pause();
             state = "pause";
+            return;
         }
-        else if(state == "pause")
+        
+        if(state == "pause")
         {
             //time = 0;
             workAudio[workAudioIndex].UnPause();
             state = "work";
+            return;
         }
+
+        Debug.Log("tried to pause when state was " + state);
     }
 
     public void Fail()
@@ -401,14 +466,14 @@ public class Manager : MonoBehaviour
             workAudio[b].Stop();
         }
 
-        centerText.text = "You failed.";
+        centerText.text = "You got a B.";
         retakeText.GetComponent<Text>().text = "retake";
-        retakeText.SetActive(true);
+        //retakeText.SetActive(true);
         failAudio.Play();
         state = "fail";
     }
 
-    public void SellAll()
+    /*public void SellAll()
     {
         if (state == "help")
         {
@@ -421,7 +486,7 @@ public class Manager : MonoBehaviour
                 supplies[b].GetComponent<Supply>().Sell();
             }
         }
-    }
+    }*/
 
     public void SetTutorial(int previous, int next)
     {
@@ -440,6 +505,34 @@ public class Manager : MonoBehaviour
                 bottomText.text = "You can click a supply you already bought to sell it and get a full refund.";
             }
         }
+    }
+
+    public void ToggleStats()
+    {
+        if(state == "help")
+        {
+            centerText.text = "This button shows or hides statistics, including clicks and turns. "
+                + "Clicking this button does not count as a click.";
+            return;
+        }
+
+        if(state == "select")
+        {
+            clicksText.GetComponent<Text>().text = "Clicks: " + clicks;
+            turnsText.GetComponent<Text>().text = "Turns: " + turns;
+            showStats = !showStats;
+            clicksText.SetActive(showStats);
+            turnsText.SetActive(showStats);
+            return;
+        }
+
+        Debug.Log("tried to toggle stats when state was " + state);
+    }
+
+    public void Click()
+    {
+        clicks++;
+        clicksText.GetComponent<Text>().text = "Clicks: " + clicks;
     }
 
     public void UpdateA(int addition)
