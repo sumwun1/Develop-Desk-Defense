@@ -40,7 +40,7 @@ public class Manager : MonoBehaviour
     public AudioSource unlockAudio;
     public AudioSource failAudio;
 	public Pin pin;
-    public GameObject[] supplies;
+    public GameObject[] supplyTypes;
     public GameObject[] supplyButtons;
     public Texture[] textures;
     public AudioSource[] workAudio;
@@ -49,14 +49,14 @@ public class Manager : MonoBehaviour
     bool showOverwrite;
     bool triggerBottle;
     bool triggerFolder;
+    bool triggeredFolder;
     int a;
     int turns;
     int clicks;
     int tutorial;
     int unlocked;
     int supplyId;
-    int bottleState;
-    int folderState;
+    //int bottleState;
     /*int spawning;
     int willSpawn;*/
     int workAudioIndex;
@@ -75,6 +75,7 @@ public class Manager : MonoBehaviour
         UpdateA(1);
         showStats = false;
         showOverwrite = false;
+        triggeredFolder = false;
         turns = 0;
         clicks = 0;
         unlocked = 0;
@@ -95,12 +96,12 @@ public class Manager : MonoBehaviour
         rateStrings[5] = "hyperfast";
         descriptions = new string[4];
         descriptions[0] = "Pencils do nearby homework. They're stronger against geometry (white) homework.\n\nStrength: 6\nRange: 1";
-        descriptions[1] = "Erasers do all homework but do more to closer homework. They're stronger against history (green) homework.\n" + 
-            "\nStrength: 0 to 5\nTrigger Range: 1\nEffect Range: 6";
-        descriptions[2] = "Bottles do a constant amount divided over all homework, and then refill for 3 turns. " +
-            "They're stronger against chemistry (red) homework.\n\nStrength: 2 to 32\nTrigger Range: 0\nEffect Range: 6";
-        descriptions[3] = "Folders delay all homework for 1 turn. Group projects (blue) get done when delayed.\n"+ 
-            "\nStrength: 0\nTrigger Range: 0\nEffect Range: 6";
+        descriptions[1] = "Bottles do a constant amount divided over all homework, and then refill at the end of the round. " +
+            "They're stronger against chemistry (red) homework.\n\nStrength: up to 32\nTrigger Range: 0\nEffect Range: 6";
+        descriptions[2] = "Erasers do all homework whenever any homework is in its trigger range. " +
+            "They're stronger against history (green) homework.\n\nStrength: 5\nTrigger Range: 1\nEffect Range: 6";
+        descriptions[3] = "Folders delay all homework for 1 turn and then cannot be used until the next round. " +
+            "Group projects (blue) get done when delayed.\n\nStrength: 0\nTrigger Range: 0\nEffect Range: 6";
         state = "title";
         //Select();
     }
@@ -176,7 +177,7 @@ public class Manager : MonoBehaviour
 					homeworks = GameObject.FindObjectsOfType<Homework>();
                     /*Temporary[] temporaries = GameObject.FindObjectsOfType<Temporary>();
                     //Debug.Log(temporaries.Length);*/
-                    if(folderState < 2)
+                    if(!triggeredFolder)
                     {
                         for (int b = 0; b < homeworks.Length; b++)
                         {
@@ -197,14 +198,14 @@ public class Manager : MonoBehaviour
                 else{
                     //Debug.Log(folderState);
 
-                    if (bottleState > 0)
+                    /*if (bottleState > 0)
                     {
                         bottleState--;
-                    }
+                    }*/
 
-                    if (folderState > 0)
+                    if (triggeredFolder)
                     {
-                        folderState--;
+                        triggeredFolder = false;
                     }
 
                     for (int b = 0; b < supplies.Length; b++)
@@ -212,24 +213,25 @@ public class Manager : MonoBehaviour
                         bool stupidVariable = supplies[b].Turn();
                     }
 
-                    if (triggerBottle && bottleState <= 0)
+                    if (triggerBottle /*&& bottleState <= 0*/)
                     {
                         for (int b = 0; b < homeworks.Length; b++)
                         {
-                            homeworks[b].TakeDamage(Mathf.FloorToInt(32f / homeworks.Length), 2);
+                            homeworks[b].TakeDamage(Mathf.CeilToInt(32f / homeworks.Length), 1);
                         }
 
-                        bottleState = 4;
+                        //bottleState = 4;
                     }
 
-                    if (triggerFolder && folderState <= 0)
+                    if (triggerFolder /*&& folderState <= 0*/)
                     {
                         for (int b = 0; b < homeworks.Length; b++)
                         {
                             homeworks[b].TakeDamage(0, 3);
                         }
 
-                        folderState = 2;
+                        //folderState = 2;
+                        triggeredFolder = true;
                     }
 
                     for(int b = 0; b < homeworks.Length; b++)
@@ -254,9 +256,11 @@ public class Manager : MonoBehaviour
     {
         moveHomework = true;
         time = 0;
-        bottleState = 0;
-        folderState = 0;
+        //bottleState = 0;
+        //folderState = 0;
+        triggeredFolder = false;
         pin.StartRound();
+        Supply[] supplies = GameObject.FindObjectsOfType<Supply>();
         /*int[] homeworkIndexes = new int[4];
         int factor = current;
 
@@ -265,7 +269,10 @@ public class Manager : MonoBehaviour
             spawning++;
             factor /= 2;
         }*/
-
+        for (int b = 0; b < supplies.Length; b++)
+        {
+            supplies[b].SetReady(true);
+        }
         //willSpawn = spawning;
     }
 

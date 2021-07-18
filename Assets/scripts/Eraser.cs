@@ -5,7 +5,7 @@ using UnityEngine;
 public class Eraser : MonoBehaviour
 {
     Desks desks;
-    int[,] damages;
+    //int[,] damages;
     Desk[] deskArray;
 
     // Start is called before the first frame update
@@ -26,9 +26,9 @@ public class Eraser : MonoBehaviour
             .Find("desks")
             .GetComponent<Desks>();
         //Debug.Log(desks.deskArray[0, 0].occupied);
-        damages = new int[4, 4];
+        //damages = new int[4, 4];
         deskArray = GameObject.Find("desks").GetComponent<Desks>().StartPencilEraser(GetComponent<Supply>().GetDesk());
-        SetDamage(GetComponent<Supply>().GetDesk().x, GetComponent<Supply>().GetDesk().y, 5);
+        //SetDamage(GetComponent<Supply>().GetDesk().x, GetComponent<Supply>().GetDesk().y, 5);
 
         /*for (int x = 0; x < 4; x++)
         {
@@ -62,14 +62,14 @@ public class Eraser : MonoBehaviour
                 for(int y = 0; y < 4; y++)
                 {
                     if (desks.deskArray[x, y].GetHomework() != null) {
-                        desks.deskArray[x, y].GetHomework().TakeDamage(damages[x, y], 1);
+                        desks.deskArray[x, y].GetHomework().TakeDamage(5, 2);
                     }
                 }
             }
         }
     }
 
-    public void SetDamage(int x, int y, int damage)
+    /*public void SetDamage(int x, int y, int damage)
     {
         //Debug.Log(damages[x, y] + "  " + damage);
 
@@ -99,5 +99,5 @@ public class Eraser : MonoBehaviour
         {
             SetDamage(x, y + 1, damage - 1);
         }
-    }
+    }*/
 }

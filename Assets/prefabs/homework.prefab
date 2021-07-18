@@ -299,11 +299,11 @@ MonoBehaviour:
   healthText: {fileID: 2305126016654784100}
   colors:
   - {r: 0, g: 0, b: 0, a: 1}
-  - {r: 1, g: 0, b: 1, a: 1}
   - {r: 0, g: 1, b: 1, a: 1}
+  - {r: 1, g: 0, b: 1, a: 1}
   - {r: 1, g: 1, b: 0, a: 1}
   materials:
   - {fileID: 2100000, guid: 4af5e671cb4fb9b42be326280837da29, type: 2}
-  - {fileID: 2100000, guid: 74a06abe77ddf154cb9b5af29e4079ad, type: 2}
   - {fileID: 2100000, guid: 6f5365e1c53152645ab54c2f110fe8c0, type: 2}
+  - {fileID: 2100000, guid: 74a06abe77ddf154cb9b5af29e4079ad, type: 2}
   - {fileID: 2100000, guid: 01222e393d670d1458511cd781eb9183, type: 2}

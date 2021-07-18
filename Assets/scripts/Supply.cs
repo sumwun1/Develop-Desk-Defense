@@ -5,6 +5,7 @@ using UnityEngine;
 public class Supply : MonoBehaviour
 {
     public int id;
+    bool ready;
     Desk desk;
     Manager _manager;
 
@@ -31,11 +32,12 @@ public class Supply : MonoBehaviour
             GetComponent<Pencil>().Start0();
         }else if(id == 1)
         {
-            GetComponent<Eraser>().Start0();
+            
         }else if(id == 2)
         {
-
-        }else if(id == 3)
+            GetComponent<Eraser>().Start0();
+        }
+        else if(id == 3)
         {
 
         }else
@@ -52,11 +54,11 @@ public class Supply : MonoBehaviour
         }
         else if (id == 1)
         {
-            GetComponent<Eraser>().Turn();
+            GetComponent<Bottle>().Turn();
         }
         else if (id == 2)
         {
-            GetComponent<Bottle>().Turn();
+            GetComponent<Eraser>().Turn();
         }
         else if (id == 3)
         {
@@ -90,6 +92,16 @@ public class Supply : MonoBehaviour
             _manager.Click();
             Sell();
         }
+    }
+
+    public void SetReady(bool input)
+    {
+        ready = input;
+    }
+
+    public bool GetReady()
+    {
+        return (ready);
     }
 
     public Manager GetManager()

@@ -18,9 +18,10 @@ public class Bottle : MonoBehaviour
 
     public void Turn()
     {
-        if(GetComponent<Supply>().GetDesk().GetHomework() != null)
+        if(GetComponent<Supply>().GetReady() && (GetComponent<Supply>().GetDesk().GetHomework() != null))
         {
             GetComponent<Supply>().GetManager().TriggerBottle();
+            GetComponent<Supply>().SetReady(false);
         }
     }
 }

@@ -7,31 +7,39 @@ public class Pin : MonoBehaviour
     public GameObject homeworkPrefab;
     public Manager _manager;
     int total;
-    int currentIndex = 0;
+    int currentIndex;
     int[] indexes;
+    int[] indexOrder;
     List<int> primes;
 
     // Start is called before the first frame update
     void Start()
     {
+        currentIndex = 0;
         indexes = new int[4];
+        indexOrder = new int[4];
         primes = new List<int>();
         primes.Add(2);
         primes.Add(3);
         primes.Add(5);
+
+        for(int a = 0; a < 4; a++)
+        {
+            indexOrder[a] = a;
+        }
     }
 
     public bool Turn()
     {
         if(GetRemaining() > 0)
         {
-            while(indexes[currentIndex] <= 0)
+            while(indexes[indexOrder[currentIndex]] <= 0)
             {
                 currentIndex = (currentIndex + 1) % 4;
             }
 
-            Instantiate(homeworkPrefab, transform.position, transform.rotation).GetComponent<Homework>().SetId(currentIndex);
-            indexes[currentIndex]--;
+            Instantiate(homeworkPrefab, transform.position, transform.rotation).GetComponent<Homework>().SetId(indexOrder[currentIndex]);
+            indexes[indexOrder[currentIndex]]--;
             currentIndex = (currentIndex + 1) % 4;
         }
         
@@ -79,6 +87,27 @@ public class Pin : MonoBehaviour
             total = 1;
             primes.Add(factor);
         }
+
+        for (int a = 0; a < 4; a++)
+        {
+            indexOrder[a] = a;
+        }
+
+        for(int a = 1; a < 4; a++)
+        {
+            for(int b = 1; b <= a; b++)
+            {
+                if(indexes[indexOrder[b - 1]] < indexes[indexOrder[b]])
+                {
+                    int temporary = indexOrder[b - 1];
+                    indexOrder[b - 1] = indexOrder[b];
+                    indexOrder[b] = temporary;
+                }
+            }
+        }
+
+        /*Debug.Log(indexes);
+        Debug.Log(indexOrder);*/
     }
 
     public int GetTotal()

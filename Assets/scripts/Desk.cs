@@ -19,7 +19,8 @@ public class Desk : MonoBehaviour
         if (!occupied && _manager.GetState() == "place" && _manager.GetSupplyId() >= 0)
         {
             _manager.Click();
-            Instantiate(_manager.supplies[_manager.GetSupplyId()], transform.position, transform.rotation).GetComponent<Supply>().Start0(this);
+            //Debug.Log(_manager.GetSupplyId());
+            Instantiate(_manager.supplyTypes[_manager.GetSupplyId()], transform.position, transform.rotation).GetComponent<Supply>().Start0(this);
             _manager.UpdateA(-2);
             _manager.SetTutorial(4, 5);
             occupied = true;

@@ -18,9 +18,10 @@ public class Folder : MonoBehaviour
 
     public void Turn()
     {
-        if (GetComponent<Supply>().GetDesk().GetHomework() != null)
+        if (GetComponent<Supply>().GetReady() && (GetComponent<Supply>().GetDesk().GetHomework() != null))
         {
             GetComponent<Supply>().GetManager().TriggerFolder();
+            GetComponent<Supply>().SetReady(false);
         }
     }
 }
