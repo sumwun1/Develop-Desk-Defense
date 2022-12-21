@@ -95,11 +95,12 @@ public class Manager : MonoBehaviour
         rateStrings[4] = "very fast";
         rateStrings[5] = "hyperfast";
         descriptions = new string[4];
-        descriptions[0] = "Pencils do nearby homework. They're stronger against geometry (white) homework.\n\nStrength: 6\nRange: 1";
+        descriptions[0] = "Pencils do nearby homework. The range is shaped like a \"+\", not a square. " +
+            "They're stronger against geometry (white) homework.\n\nStrength: 6\nRange: 1";
         descriptions[1] = "Bottles do a constant amount divided over all homework, and then refill at the end of the round. " +
             "They're stronger against chemistry (red) homework.\n\nStrength: up to 32\nTrigger Range: 0\nEffect Range: 6";
         descriptions[2] = "Erasers do all homework whenever any homework is in its trigger range. " +
-            "They're stronger against history (green) homework.\n\nStrength: 5\nTrigger Range: 1\nEffect Range: 6";
+            "The trigger range is shaped like a \"+\", not a square. They're stronger against history (green) homework.\n\nStrength: 5\nTrigger Range: 1\nEffect Range: 6";
         descriptions[3] = "Folders delay all homework for 1 turn and then cannot be used until the next round. " +
             "Group projects (blue) get done when delayed.\n\nStrength: 0\nTrigger Range: 0\nEffect Range: 6";
         state = "title";
